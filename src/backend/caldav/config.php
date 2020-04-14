@@ -38,6 +38,15 @@ define('CALDAV_SERVER', 'caldavserver.domain.com');
 // Server port
 define('CALDAV_PORT', '443');
 
+// Don't use the full Email for path building. Use local part only
+// Nextcloud external accounts requires full Email for login but
+// uses only local part for URLs
+// Login: name@domain.tld
+// User: name
+// URL: /remote.php/dav/calendars/name
+define('CALDAV_USE_FULLEMAIL_FOR_PATH', false);
+
+
 // Path
 define('CALDAV_PATH', '/caldav.php/%u/');
 

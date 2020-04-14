@@ -96,7 +96,24 @@ class CalDAVClient {
 	 */
 	private $curl = false;
 
-    private $synctoken = array();
+	private $synctoken = array();
+	
+    /**
+      * Contructor, handles different contructors
+      * Select the _contructor depending on the number
+      * of parameters e.g. _contructor3
+      */
+	function __construct() 
+	{ 
+		$a = func_get_args(); 
+		$i = func_num_args(); 
+		if (method_exists($this,$f='__construct'.$i)) { 
+			call_user_func_array(array($this,$f),$a); 
+		}
+		else {
+			ZLog::Write(LOGLEVEL_ERROR, sprintf("BackendCalDAV->caldav_backend(): Unknown contructor with %d parameters called", $i));
+		}	   
+	} 
 
 	/**
 	* Constructor, initialises the class
@@ -105,7 +122,7 @@ class CalDAVClient {
 	* @param string $user        The name of the user logging in
 	* @param string $pass        The password for that user
 	*/
-	function __construct( $caldav_url, $user, $pass ) {
+	function __construct3( $caldav_url, $user, $pass ) {
         $this->url = $caldav_url;
 		$this->user = $user;
 		$this->pass = $pass;
@@ -129,6 +146,38 @@ class CalDAVClient {
 		}
 	}
 
+    /**
+	* Constructor, initialises the class
+	*
+	* @param string $caldav_url  The URL for the calendar server
+	* @param string $user        The name of the user for access 
+	* @param string $loginuser	 
+	* @param string $pass        The password for that user
+	*/
+	function __construct4( $caldav_url, $user, $loginuser, $pass ) {
+		$this->url = $caldav_url;
+		$this->user = $user;
+		$this->pass = $pass;
+		$this->auth = $loginuser . ':' . $pass;
+		$this->headers = array();
+
+		$parsed_url = parse_url($caldav_url);
+		if ($parsed_url === false) {
+			ZLog::Write(LOGLEVEL_ERROR, sprintf("BackendCalDAV->caldav_backend(): Couldn't parse URL: %s", $caldav_url));
+			return;
+		}
+
+		$this->server = $parsed_url['scheme'] . '://' . $parsed_url['host'] . ':' . $parsed_url['port'];
+		$this->base_url  = $parsed_url['path'];
+	//ZLog::Write(LOGLEVEL_DEBUG, sprintf("BackendCalDAV->caldav_backend(): base_url '%s'", $this->base_url));
+	//$this->base_url .= !empty($parsed_url['query'])    ? '?' . $parsed_url['query']    : '';
+	//$this->base_url .= !empty($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+
+		if (substr($this->base_url, -1) !== '/') {
+			$this->base_url = $this->base_url . '/';
+		}
+	}
+	
 	/**
      * Checks if the CalDAV server is reachable
      *
