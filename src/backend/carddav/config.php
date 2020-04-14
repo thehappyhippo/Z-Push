@@ -36,6 +36,15 @@ define('CARDDAV_SERVER', 'localhost');
 // Server port
 define('CARDDAV_PORT', '443');
 
+// Don't use the full Email for path building. Use local part only
+// Nextcloud external accounts requires full Email for login but
+// uses only local part for URLs
+// Login: name@domain.tld
+// User:  name
+// %u is local part of Email if USE_FULLEMAIL_FOR_LOGIN is true
+// URL: /remote.php/dav/addressbooks/users/name/
+define('CARDDAV_USE_FULLEMAIL_FOR_PATH', false);
+
 // Server path to the addressbook, or the principal with the addressbooks
 //  If your user has more than 1 addressbook point it to the principal.
 //  Example: user test@domain.com will have 2 addressbooks

@@ -77,10 +77,17 @@ class BackendCardDAV extends BackendDiff implements ISearchProvider {
      * @return boolean
      */
     public function Logon($username, $domain, $password) {
-        $this->url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username, CARDDAV_PATH));
-        $this->default_url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username, CARDDAV_DEFAULT_PATH));
+         /** Quick fix to support login with Email add access with name only
+          */
+        $username_plain = $username;
+        if(defined('CARDDAV_USE_FULLEMAIL_FOR_PATH') && !CARDDAV_USE_FULLEMAIL_FOR_PATH) {
+            $username_plain = Utils::GetLocalPartFromEmail($username); 
+        }
+         
+        $this->url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username_plain, CARDDAV_PATH));
+        $this->default_url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username_plain, CARDDAV_DEFAULT_PATH));
         if (defined('CARDDAV_GAL_PATH')) {
-            $this->gal_url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username, CARDDAV_GAL_PATH));
+            $this->gal_url = CARDDAV_PROTOCOL . '://' . CARDDAV_SERVER . ':' . CARDDAV_PORT . str_replace("%d", $domain, str_replace("%u", $username_plain, CARDDAV_GAL_PATH));
         }
         else {
             $this->gal_url = false;
