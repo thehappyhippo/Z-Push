@@ -190,6 +190,7 @@ class CalDAVClient {
             case 200:
             case 207:
             case 401:
+            case 404:    //fixed bug: in Nextcloud >16 which returns now 404 instead of 401, which breaks the login test 
                 $status = true;
                 break;
             default:
